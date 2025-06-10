@@ -9,6 +9,8 @@
 
 # Python
 env/
+__pycache__/
+webhook.db
 
 # Build results
 [Dd]ebug/

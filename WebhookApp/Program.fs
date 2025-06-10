@@ -4,12 +4,19 @@ open Microsoft.Extensions.Hosting
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.OpenApi.Models
 open Microsoft.AspNetCore.Http
+open System.Threading.Tasks
+
 
 open WebhookApp.Webhook
 open WebhookApp.Types
+open WebhookApp.Database
+
 
 [<EntryPoint>]
 let main args =
+
+    let secretKey = "eu-amo-prog-func"
+
     let builder = WebApplication.CreateBuilder(args)
 
     // ── Register Swagger/OpenAPI services before Build() ──
@@ -28,10 +35,24 @@ let main args =
     // ── Your endpoints ──
     app.MapGet("/", Func<string>(fun () -> "Hello World!")) |> ignore
 
-    app.MapPost(
-        "/webhook", 
-        Func<PaymentPayload, IResult>(handlePayment)
-    ) |> ignore
+    app.MapPost("/webhook", Func<HttpRequest, Task<IResult>>(fun req -> task {
+        let token =
+            match req.Headers.TryGetValue("X-Webhook-Token") with
+            | true, values -> values.ToString()
+            | _ -> ""
 
-    app.Run()
+        if token <> secretKey then
+            return Results.Accepted ("", {| message = "Transaction ignored because of invalid token" |})
+        else
+            try
+                let! payload = req.ReadFromJsonAsync<PaymentPayload>()
+                return! handlePayment payload
+            with ex ->
+                return Results.BadRequest {| message = "Invalid payload format" |}
+    })) |> ignore
+
+
+    initializeDatabase ()
+
+    app.Run("http://localhost:5000")
     0

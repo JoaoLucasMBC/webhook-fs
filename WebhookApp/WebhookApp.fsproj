@@ -6,12 +6,16 @@
 
   <ItemGroup>
     <Compile Include="Types.fs" />
+    <Compile Include="Database.fs" />
+    <Compile Include="Validator.fs" />
+    <Compile Include="ExternalAPI.fs" />
     <Compile Include="Webhook.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
   </ItemGroup>
 

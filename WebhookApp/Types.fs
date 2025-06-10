@@ -6,8 +6,8 @@ module Types =
 
     type PaymentPayload = {
         event : string
-        transactionId : string
-        amount        : decimal
-        currency        : string
+        transaction_id : string
+        amount : decimal
+        currency : string
         timestamp : DateTime
     }
