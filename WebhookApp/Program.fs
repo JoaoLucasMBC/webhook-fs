@@ -53,6 +53,5 @@ let main args =
 
 
     initializeDatabase ()
-
-    app.Run("http://localhost:5000")
+    app.Run()
     0
